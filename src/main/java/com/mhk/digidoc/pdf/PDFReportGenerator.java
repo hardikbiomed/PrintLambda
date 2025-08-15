@@ -9,6 +9,7 @@ import com.mhk.digidoc.entity.PatientReport;
 import com.mhk.digidoc.entity.PatientReportSegment;
 import com.mhk.digidoc.entity.ReportWrapper;
 import com.mhk.digidoc.handler.PrintHandler;
+import com.mhk.digidoc.util.DateUtils;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 
 import java.io.*;
@@ -39,7 +40,7 @@ public class PDFReportGenerator {
                 htmlContent = htmlContent.replace("{{address}}",
                         patient.getAddress() != null ? patient.getAddress() : "");
 
-// htmlContent = htmlContent.replace("{{patientage}}", DateUtils.getAge(patient.getDateOfBirth()));
+                htmlContent = htmlContent.replace("{{patientage}}", DateUtils.getAge(patient.getDateOfBirth()));
 
                 htmlContent = htmlContent.replace("{{patientdob}}",
                         patient.getDateOfBirth() != null ? patient.getDateOfBirth().toString() : "");
