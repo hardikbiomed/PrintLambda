@@ -47,7 +47,7 @@ public class Main {
         report.setLastUpdatedTime("2023-10-01T12:00:00");
         report.setRemarks("Initial report");
         report.setTemplateRererenceID("template-123");
-        report.setReportId("report-123");
+        report.setReportID("report-123");
         report.setDepartment("Cardiology");
         report.setPatient(patient);
 

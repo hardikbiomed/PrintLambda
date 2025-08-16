@@ -22,7 +22,7 @@ public class PDFReportGenerator {
 
 
     public void loadHTML(ByteArrayOutputStream bos, Patient patient, PatientReport report, String tenantId, String htmlContent) {
-            String templateName = report.getReportName().toLowerCase().replaceAll(" ","_")+".html";
+
             try{
 
                 if (htmlContent == null || htmlContent.trim().isEmpty()) {
@@ -34,8 +34,16 @@ public class PDFReportGenerator {
                         (patient.getFirstName() != null ? patient.getFirstName() : "") + " " +
                                 (patient.getLastName() != null ? patient.getLastName() : ""));
 
+                htmlContent = htmlContent.replace("{{patientid}}",
+                        patient.getPatientID() != null ? patient.getPatientID() : "");
+
+
                 htmlContent = htmlContent.replace("{{patientgender}}",
                         patient.getGender() != null ? patient.getGender() : "");
+
+
+                htmlContent = htmlContent.replace("{{reportid}}",
+                            report.getReportID() != null ? report.getReportID() : "");
 
                 htmlContent = htmlContent.replace("{{address}}",
                         patient.getAddress() != null ? patient.getAddress() : "");
