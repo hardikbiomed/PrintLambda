@@ -28,6 +28,8 @@ public class PatientReport {
 
     private String templateRererenceID;
 
+    private String reportId;
+
     private String department;  // Department handling the report
 
     private Patient patient;  // Patient associated with the report
@@ -38,6 +40,14 @@ public class PatientReport {
         if (reportInstanceUUID == null) {
             this.reportInstanceUUID = UUID.randomUUID().toString();  // Generate UUID if not present
         }
+    }
+
+    public String getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(String reportId) {
+        this.reportId = reportId;
     }
 
     public String getReportInstanceUUID() {
