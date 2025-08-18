@@ -14,7 +14,13 @@ public class PatientReport {
 
     private Date reportStartDate;  // Start date of the report
 
+
+
+    private Date reportEndDate;  // Start date of the report
+
     private String reportStatus;  // Status of the report
+
+
 
     private String assignedTo;  // Person assigned to the report
 
@@ -48,6 +54,14 @@ public class PatientReport {
         if (reportInstanceUUID == null) {
             this.reportInstanceUUID = UUID.randomUUID().toString();  // Generate UUID if not present
         }
+    }
+
+    public Date getReportEndDate() {
+        return reportEndDate;
+    }
+
+    public void setReportEndDate(Date reportEndDate) {
+        this.reportEndDate = reportEndDate;
     }
 
     public String getReportInstanceUUID() {

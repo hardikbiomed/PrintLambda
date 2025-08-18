@@ -24,6 +24,20 @@ public class DateUtils {
         return now.format(formatter);
     }
 
+
+    public static String getFormatedDate(Date date) {
+        // Define the desired format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+
+        // Convert Date to LocalDate
+        LocalDate localDate = date.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDate();
+
+        // Format the date using the formatter
+        return localDate.format(formatter);
+    }
+
     // Method to calculate age
     public static String getAge(Date dateOfBirth) {
         LocalDate currentDate = LocalDate.now();  // Get today's date

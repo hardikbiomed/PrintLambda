@@ -40,7 +40,8 @@ public class Main {
         report.setReportInstanceUUID(UUID.randomUUID().toString());
         report.setReportName("Sample Report");
         report.setReportStartDate(new Date());
-        report.setReportStatus("Draft");
+        report.setReportEndDate(new Date());
+        report.setReportStatus("Complete");
         report.setAssignedTo("Dr. Smith");
         report.setSignedBy("Dr. Smith");
         report.setReferredBy("Dr. Jones");
