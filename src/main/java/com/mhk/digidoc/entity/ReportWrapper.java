@@ -14,6 +14,9 @@ public class ReportWrapper {
         return patientReport;
     }
 
+
+
+
     public void setPatientReport(PatientReport patientReport) {
         this.patientReport = patientReport;
     }
@@ -39,6 +42,16 @@ public class ReportWrapper {
     private PatientReport patientReport;
 
     private String reportName;
+
+    public String getReportContent() {
+        return reportContent;
+    }
+
+    public void setReportContent(String reportContent) {
+        this.reportContent = reportContent;
+    }
+
+    private String reportContent;
 
     public String getReportTemplate() {
         return reportTemplate;

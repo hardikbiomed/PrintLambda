@@ -1,14 +1,9 @@
 package com.mhk.digidoc.pdf;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.ObjectMetadata;
+
 import com.mhk.digidoc.entity.Patient;
 import com.mhk.digidoc.entity.PatientReport;
 import com.mhk.digidoc.entity.PatientReportSegment;
-import com.mhk.digidoc.entity.ReportWrapper;
-import com.mhk.digidoc.handler.PrintHandler;
 import com.mhk.digidoc.util.DateUtils;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -19,15 +14,12 @@ import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
 
 import java.awt.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class PDFReportGenerator {
 
 
-    public void loadHTML(ByteArrayOutputStream bos, Patient patient, PatientReport report, String tenantId, String htmlContent) {
+    public void loadHTML(ByteArrayOutputStream bos, Patient patient, PatientReport report, String htmlContent) {
         try {
             if (htmlContent == null || htmlContent.trim().isEmpty()) {
                 throw new IllegalStateException("HTML content is empty. Check S3 object and path.");

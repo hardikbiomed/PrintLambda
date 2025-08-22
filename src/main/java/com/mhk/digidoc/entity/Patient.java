@@ -14,6 +14,16 @@ public class Patient  {
 
     private String firstName; // First name of the patient
 
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    private String middleName; // First name of the patient
+
     private String lastName;  // Last name of the patient
 
     private Date dateOfBirth; // Date of birth of the patient

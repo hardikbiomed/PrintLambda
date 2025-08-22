@@ -140,7 +140,7 @@ public class Main {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         FileInputStream fileInputStream = new FileInputStream(new File(("/home/oem/software/digidoc/reports_samples/dental_report/treatment_summary.html")));
         String fileData = new String(fileInputStream.readAllBytes());
-        generator.loadHTML(byteArrayOutputStream, patient, patient.getReports().get(0), "tenant-123", fileData);
+        generator.loadHTML(byteArrayOutputStream, patient, patient.getReports().get(0),  fileData);
         fileInputStream.close();
         FileOutputStream fos = new FileOutputStream(new File("/home/oem/software/digidoc/reports_samples/dental_report/treatment_summary.pdf"));
         byteArrayOutputStream.writeTo(fos);
