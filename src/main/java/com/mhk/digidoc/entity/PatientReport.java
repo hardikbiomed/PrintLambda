@@ -20,7 +20,15 @@ public class PatientReport {
 
     private String reportStatus;  // Status of the report
 
+    private String storageLocation;
 
+    public String getStorageLocation() {
+        return storageLocation;
+    }
+
+    public void setStorageLocation(String storageLocation) {
+        this.storageLocation = storageLocation;
+    }
 
     private String assignedTo;  // Person assigned to the report
 
