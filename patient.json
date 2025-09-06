@@ -1,0 +1,18 @@
+{
+  "internalUUID": "123e4567-e89b-12d3-a456-426614174000",
+  "patientID": "P123456",
+  "firstName": "John",
+  "middleName": "A.",
+  "lastName": "Doe",
+  "dateOfBirth": "1990-05-15T00:00:00.000+00:00",
+  "contactNumber": "+1234567890",
+  "emailID": "john.doe@example.com",
+  "gender": "Male",
+  "address": "123 Main St, Springfield",
+  "maritalStatus": "Single",
+  "nationality": "American",
+  "creationTime": "2024-06-01T10:30:00",
+  "lastAccessedTime": "2024-06-10T15:45:00",
+  "verificationStatus": "Verified",
+  "reports": []
+}

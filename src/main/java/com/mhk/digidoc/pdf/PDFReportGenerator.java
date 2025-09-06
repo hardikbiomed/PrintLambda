@@ -33,6 +33,9 @@ public class PDFReportGenerator {
             htmlContent = htmlContent.replace("{{patientid}}",
                     patient.getPatientID() != null ? patient.getPatientID() : "");
 
+            htmlContent = htmlContent.replace("{{dob}}",
+                    patient.getDateOfBirth() != null ? DateUtils.getFormatedDate(patient.getDateOfBirth()) : "");
+
             htmlContent = htmlContent.replace("{{patientgender}}",
                     patient.getGender() != null ? patient.getGender() : "");
 
