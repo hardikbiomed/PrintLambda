@@ -9,12 +9,7 @@ import com.mhk.digidoc.entity.ReportTemplate;
 import com.mhk.digidoc.pdf.PDFReportGenerator;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.UUID;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -25,57 +20,47 @@ public class LocalMain {
         // You can run your tests here or invoke methods from your classes to see how they behave.
         System.out.println("LocalMain is running. You can add your test logic here.");
 
-        // Example of creating a new instance of ReportWrapper and printing its class name
-        // ReportWrapper reportWrapper = new ReportWrapper();
-        // System.out.println("Created instance of: " + reportWrapper.getClass().getName());
-        String zipPath = args[0];
-        boolean jsonFound = false, htmlFound = false;
-        String htmlFileName = null;
-        byte[] htmlContent = null;
-        ReportTemplate template =  null;
-        InputStream inputStream = new FileInputStream(zipPath);
-        byte[]  zipContent = inputStream.readAllBytes();
-        inputStream.close();
-        // Use Quarkus FileUpload API
-        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipPath))) {
-            ZipEntry entry;
-            while ((entry = zis.getNextEntry()) != null) {
-                if (entry.getName().endsWith(".json")) {
-                    jsonFound = true;
-                    String json = new String(zis.readAllBytes());
-                    try{
-                        ObjectMapper mapper = new ObjectMapper();
-                        mapper.registerModule(new JavaTimeModule());
-                        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-                        template = mapper.readValue(json, ReportTemplate.class);
-                        System.out.println("Parsed JSON successfully: " + template.getName());
-                    }catch (Exception ex){
-                        ex.printStackTrace();
-                    }
-                } else if (entry.getName().endsWith(".html")) {
-                    htmlFound = true;
-                    htmlFileName = entry.getName();
-                    htmlContent = zis.readAllBytes();
-                }
+        File parentDirectory = new File(args[0]);
+        if(!parentDirectory.exists()){
+            System.out.println("Directory Not found "+ args[0]);
+            return;
+        }
+        File jsonFile = null;
+        File htmlFIle = null;
+
+        File[] allFiles = parentDirectory.listFiles();
+        assert allFiles !=null;
+        for(File file: allFiles){
+            if(file.getName().endsWith(".json")){
+                jsonFile = file;
+            }else if(file.getName().endsWith(".html")) {
+                htmlFIle = file;
             }
-        } catch (Exception e) {
-            System.out.println("Error processing uploaded zip file: " + e.getMessage());
+        }
+        if(jsonFile == null || htmlFIle == null){
+            System.out.println("Exiting ... JSON or HTML file not found in directory "+ args[0]);
             return;
         }
-        if (!jsonFound || !htmlFound) {
-            System.out.println("Missing JSON or HTML file ini ZIP");
-            return;
-        }
-        if(template == null){
-            System.out.println("Template is null");
+
+        String htmlContent = getData(htmlFIle);
+        String jsonContent = getData(jsonFile);
+
+        ReportTemplate template =  null;
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        template = mapper.readValue(jsonContent, ReportTemplate.class);
+        System.out.println("Parsed JSON successfully: " + template.getName());
+
+        String expectedHTMLFileName = template.getName().trim().toLowerCase().replaceAll(" ", "_").toLowerCase()+".html";
+        if(!expectedHTMLFileName.equals(htmlFIle.getName())){
+            System.out.println("Exiting HTML file name does not match template name. Expected: "+expectedHTMLFileName+" Found: "+htmlFIle.getName());
             return;
         }
         FileInputStream fis = new FileInputStream("patient.json");
         byte[] patientBytes = fis.readAllBytes();
         fis.close();
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         Patient patient = mapper.readValue(patientBytes, Patient.class);
         PatientReport report = new PatientReport();
@@ -94,10 +79,10 @@ public class LocalMain {
         });
         PDFReportGenerator pdfReportGenerator = new PDFReportGenerator();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        pdfReportGenerator.loadHTML(bos, patient, report, new String(htmlContent));
+        pdfReportGenerator.loadHTML(bos, patient, report, htmlContent);
         byte[] pdfBytes = bos.toByteArray();
         //save PDF
-        FileOutputStream fos = new FileOutputStream("output.pdf");
+        FileOutputStream fos = new FileOutputStream(parentDirectory+"/output.pdf");
         fos.write(pdfBytes);
         fos.close();
     }
@@ -106,5 +91,13 @@ public class LocalMain {
        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         return reader.readLine();
     }
+
+    static String getData(File file) throws Exception{
+        FileInputStream fis = new FileInputStream(file);
+        byte[] allByte = fis.readAllBytes();
+        fis.close();
+        return new String(allByte);
+    }
+
 
 }
