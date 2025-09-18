@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Base64;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mhk.digidoc.pdf.PDFReportGenerator;
@@ -36,6 +37,8 @@ public class SimplePDFSocketServer {
                 // Decode and parse JSON
                 byte[] jsonBytes = Base64.getDecoder().decode(base64Bytes);
                 ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
                 objectMapper.registerModule(new JavaTimeModule());
                 ReportWrapper wrapper = objectMapper.readValue(jsonBytes, ReportWrapper.class);
 
