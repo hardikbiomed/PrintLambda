@@ -45,7 +45,7 @@ public class Main {
         report.setAssignedTo("Dr. Smith");
         report.setSignedBy("Dr. Smith");
         report.setReferredBy("Dr. Jones");
-        report.setLastUpdatedTime("2023-10-01T12:00:00");
+        report.setLastUpdatedTime(new Date());
         report.setRemarks("Initial report");
         report.setTemplateRererenceID("template-123");
         report.setReportID("report-123");
