@@ -1,34 +1,31 @@
 package com.mhk.digidoc.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 
-public class PatientReport {
 
+
+public class PatientReport {
 
     private String reportInstanceUUID;  // Unique identifier for the report instance
 
     private String reportName;  // Name of the report
 
+    private String reportID;  // Identifier for the report, can be used to link to a template or specific report type
+
+    /**This is used weather this requires approval from doctor or nurse can approve. e.g. Vital Observation does not require approval. */
+    private String approvalCategory; // Approval category of the report template
+
+
     private Date reportStartDate;  // Start date of the report
 
-
-
-    private Date reportEndDate;  // Start date of the report
+    private Date reportEndDate; // Start date of the report
 
     private String reportStatus;  // Status of the report
-
-    private String storageLocation;
-
-    public String getStorageLocation() {
-        return storageLocation;
-    }
-
-    public void setStorageLocation(String storageLocation) {
-        this.storageLocation = storageLocation;
-    }
 
     private String assignedTo;  // Person assigned to the report
 
@@ -36,25 +33,48 @@ public class PatientReport {
 
     private String referredBy;  // Person who referred the patient
 
-    private String lastUpdatedTime;  // Last updated time of the report
+    private Date lastUpdatedTime;  // Last updated time of the report
 
     private String remarks;
 
     private String templateRererenceID;
 
-    public String getReportID() {
-        return reportID;
-    }
-
-    public void setReportID(String reportID) {
-        this.reportID = reportID;
-    }
-
-    private String reportID;
-
     private String department;  // Department handling the report
 
+    @JsonIgnore
     private Patient patient;  // Patient associated with the report
+
+    private String storageLocation;
+
+    private String reportOpenStatus;
+
+    private String openedBy;
+
+
+    public String getReportOpenStatus() {
+        return reportOpenStatus;
+    }
+
+    public void setReportOpenStatus(String reportOpenStatus) {
+        this.reportOpenStatus = reportOpenStatus;
+    }
+
+    public String getOpenedBy() {
+        return openedBy;
+    }
+
+    public void setOpenedBy(String openedBy) {
+        this.openedBy = openedBy;
+    }
+
+    public String getApprovalCategory() {
+        return approvalCategory;
+    }
+
+    public void setApprovalCategory(String approvalCategory) {
+        this.approvalCategory = approvalCategory;
+    }
+
 
     private List<PatientReportSegment> segments;  // List of segments associated with the report
 
@@ -64,6 +84,23 @@ public class PatientReport {
         }
     }
 
+    public String getStorageLocation() {
+        return storageLocation;
+    }
+
+    public void setStorageLocation(String storageLocation) {
+        this.storageLocation = storageLocation;
+    }
+
+
+    public String getReportID() {
+        return reportID;
+    }
+
+    public void setReportID(String reportID) {
+        this.reportID = reportID;
+    }
+
     public Date getReportEndDate() {
         return reportEndDate;
     }
@@ -71,7 +108,6 @@ public class PatientReport {
     public void setReportEndDate(Date reportEndDate) {
         this.reportEndDate = reportEndDate;
     }
-
     public String getReportInstanceUUID() {
         return reportInstanceUUID;
     }
@@ -128,11 +164,11 @@ public class PatientReport {
         this.referredBy = referredBy;
     }
 
-    public String getLastUpdatedTime() {
+    public Date getLastUpdatedTime() {
         return lastUpdatedTime;
     }
 
-    public void setLastUpdatedTime(String lastUpdatedTime) {
+    public void setLastUpdatedTime(Date lastUpdatedTime) {
         this.lastUpdatedTime = lastUpdatedTime;
     }
 
@@ -175,4 +211,5 @@ public class PatientReport {
     public void setSegments(List<PatientReportSegment> segments) {
         this.segments = segments;
     }
+
 }

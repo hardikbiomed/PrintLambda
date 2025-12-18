@@ -1,26 +1,23 @@
 package com.mhk.digidoc.entity;
 
 
+
+
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+
+
 public class Patient  {
+
 
     private String internalUUID;  // Unique identifier for the patient
 
     private String patientID; // Patient’s identifier
 
     private String firstName; // First name of the patient
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
 
     private String middleName; // First name of the patient
 
@@ -45,6 +42,15 @@ public class Patient  {
     private LocalDateTime lastAccessedTime;
 
     private String verificationStatus;  // Verification status for the patient’s contact details
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
 
     private List<PatientReport> reports;  // List of reports associated with the patient
 

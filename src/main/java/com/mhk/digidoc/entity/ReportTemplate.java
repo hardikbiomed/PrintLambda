@@ -1,6 +1,7 @@
 package com.mhk.digidoc.entity;
 
 
+
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +19,8 @@ public class ReportTemplate  {
 
     private String department; // Department associated with the report template
 
-
+    /**This is used weather this requires approval from doctor or nurse can approve. e.g. Vital Observation does not require approval. */
+    private String approvalCategory; // Approval category of the report template
 
     private int version;
 
@@ -28,6 +30,13 @@ public class ReportTemplate  {
         }
     }
 
+    public String getApprovalCategory() {
+        return approvalCategory;
+    }
+
+    public void setApprovalCategory(String approvalCategory) {
+        this.approvalCategory = approvalCategory;
+    }
     public int getVersion() {
         return version;
     }

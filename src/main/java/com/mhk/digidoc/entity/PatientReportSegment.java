@@ -1,5 +1,8 @@
 package com.mhk.digidoc.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.List;
 import java.util.UUID;
 
 
@@ -17,6 +20,16 @@ public class PatientReportSegment  {
 
     private String referenceSegment;
 
+    private String mandatory; // whether the segment is mandatory
+    /*This is necessary to show UI Type e.g. DropDown or Checkbox*/
+    private String uiType;
+
+    private List<String> uiOptions; // Options for UI elements like DropDown or Checkbox
+
+
+
+
+    @JsonIgnore
     private PatientReport patientReport;  // Report instance associated with the segment
 
     private int segmentOrder;
@@ -25,6 +38,31 @@ public class PatientReportSegment  {
         if (id == null || id.isEmpty()) {
             this.id = UUID.randomUUID().toString();  // Generate UUID if not present
         }
+    }
+
+
+    public String getMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(String mandatory) {
+        this.mandatory = mandatory;
+    }
+
+    public String getUiType() {
+        return uiType;
+    }
+
+    public void setUiType(String uiType) {
+        this.uiType = uiType;
+    }
+
+    public List<String> getUiOptions() {
+        return uiOptions;
+    }
+
+    public void setUiOptions(List<String> uiOptions) {
+        this.uiOptions = uiOptions;
     }
 
     public String getId() {

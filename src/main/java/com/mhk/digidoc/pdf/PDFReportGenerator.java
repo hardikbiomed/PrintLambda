@@ -57,7 +57,9 @@ public class PDFReportGenerator {
 
             List<PatientReportSegment> segmentList = report.getSegments();
             for (PatientReportSegment segment : segmentList) {
-                String segmentName = segment.getTitle().trim().toLowerCase().replaceAll(" ", "");
+                String segmentName = segment.getTitle().trim().toLowerCase().replaceAll(" ", "").replaceAll("[&,/()]", "");
+                if(segment.getWebContent() == null || "null".equalsIgnoreCase(segment.getWebContent().trim()))
+                    segment.setWebContent("");
                 htmlContent = htmlContent.replace("{{" + segmentName + "}}", segment.getWebContent());
             }
 

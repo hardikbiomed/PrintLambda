@@ -2,15 +2,23 @@ package com.mhk.digidoc.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.List;
 import java.util.UUID;
 
-public class ReportTemplateSegment  {
+public class ReportTemplateSegment{
 
     private String segmentUUID;  // Unique identifier for the segment
 
     private String category;  // Category of the report template segment
 
     private String title;  // Title of the report template segment
+
+    private String mandatory; // whether the segment is mandatory
+
+    /*This is necessary to show UI Type e.g. DropDown or Checkbox*/
+    private String uiType;
+
+    private List<String> uiOptions; // Options for UI elements like DropDown or Checkbox
 
     private String webContent;  // Web content of the report template segment
 
@@ -27,6 +35,28 @@ public class ReportTemplateSegment  {
         }
     }
 
+    public String getUiType() {
+        return uiType;
+    }
+
+    public void setUiType(String uiType) {
+        this.uiType = uiType;
+    }
+
+    public List<String> getUiOptions() {
+        return uiOptions;
+    }
+
+    public void setUiOptions(List<String> uiOptions) {
+        this.uiOptions = uiOptions;
+    }
+    public String getMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(String mandatory) {
+        this.mandatory = mandatory;
+    }
     public String getSegmentUUID() {
         return segmentUUID;
     }
