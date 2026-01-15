@@ -25,7 +25,6 @@ public class PrintHandler implements RequestHandler<ReportWrapper, String> {
             byte[] pdfBytes = byteArrayOutputStream.toByteArray();
             String response = Base64.getEncoder().encodeToString(pdfBytes);
             logger.info("PDF generated successfully, size: {} bytes", pdfBytes.length);
-            logger.info("Returning Base64 encoded PDF string: " + response);
             return response;
         } catch (Exception e) {
             logger.error("Error generating PDF", e);
