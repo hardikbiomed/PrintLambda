@@ -14,9 +14,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
+
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static Patient createSamplePatient() {
         Patient patient = new Patient();
@@ -135,6 +140,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
         // to see how IntelliJ IDEA suggests fixing it.
+        logger.info("Starting PDF generation test");
         PDFReportGenerator generator = new PDFReportGenerator();
         Patient patient = createSamplePatient();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -145,6 +151,6 @@ public class Main {
         FileOutputStream fos = new FileOutputStream(new File("/home/oem/software/digidoc/reports_samples/dental_report/treatment_summary.pdf"));
         byteArrayOutputStream.writeTo(fos);
         fos.close();
-        System.out.println("PDF generated successfully.");
+        logger.info("PDF generated successfully.");
     }
 }

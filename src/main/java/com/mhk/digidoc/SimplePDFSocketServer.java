@@ -11,15 +11,21 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mhk.digidoc.pdf.PDFReportGenerator;
 import com.mhk.digidoc.entity.ReportWrapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SimplePDFSocketServer {
+
+    private static final Logger logger = LoggerFactory.getLogger(SimplePDFSocketServer.class);
+
     public static void main(String[] args) throws IOException {
         int port = 8089;
         ServerSocket serverSocket = new ServerSocket(port);
-        System.out.println("Server listening on port " + port);
+        logger.info("Server listening on port {}", port);
 
         while (true) {
             try (Socket clientSocket = serverSocket.accept()) {
-                System.out.println("Client connected: " + clientSocket.getInetAddress());
+                logger.info("Client connected: {}", clientSocket.getInetAddress());
 
                 InputStream in = clientSocket.getInputStream();
                 OutputStream out = clientSocket.getOutputStream();
@@ -30,10 +36,12 @@ public class SimplePDFSocketServer {
                 byte[] base64Bytes = new byte[length];
                 dataIn.readFully(base64Bytes);
                 if (base64Bytes.length == 0) {
+                    logger.warn("No data received from client");
                     out.write("No data received".getBytes());
                     continue;
                 }
 
+                logger.debug("Decoding and parsing JSON data");
                 // Decode and parse JSON
                 byte[] jsonBytes = Base64.getDecoder().decode(base64Bytes);
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -42,6 +50,7 @@ public class SimplePDFSocketServer {
                 objectMapper.registerModule(new JavaTimeModule());
                 ReportWrapper wrapper = objectMapper.readValue(jsonBytes, ReportWrapper.class);
 
+                logger.info("Generating PDF for patient: {}", wrapper.getPatient() != null ? wrapper.getPatient().getPatientID() : "unknown");
                 // Generate PDF
                 ByteArrayOutputStream pdfOut = new ByteArrayOutputStream();
                 PDFReportGenerator generator = new PDFReportGenerator();
@@ -54,9 +63,9 @@ public class SimplePDFSocketServer {
                 dataOut.write(pdfBytes);
                 dataOut.flush();
 
-                System.out.println("PDF sent to client (" + pdfBytes.length + " bytes)");
+                logger.info("PDF sent to client ({} bytes)", pdfBytes.length);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Error processing client request", e);
             }
         }
     }

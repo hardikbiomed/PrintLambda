@@ -16,15 +16,28 @@ import java.awt.*;
 import java.io.*;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PDFReportGenerator {
 
+    private static final Logger logger = LoggerFactory.getLogger(PDFReportGenerator.class);
+
+    static {
+        // Disable PDFBox font cache globally to prevent Lambda timeout
+        System.setProperty("pdfbox.fontcache", "");
+        System.setProperty("java.awt.headless", "true");
+        System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
+    }
 
     public void loadHTML(ByteArrayOutputStream bos, Patient patient, PatientReport report, String htmlContent) {
+        logger.info("Starting PDF generation for patient ID: {}", patient != null ? patient.getPatientID() : "unknown");
         try {
             if (htmlContent == null || htmlContent.trim().isEmpty()) {
                 throw new IllegalStateException("HTML content is empty. Check S3 object and path.");
             }
 
+            logger.debug("Replacing placeholders in HTML content");
             // Replace placeholders
             htmlContent = htmlContent.replace("{{patientname}}",
                     (patient.getFirstName() != null ? patient.getFirstName() : "") + " " +
@@ -63,15 +76,38 @@ public class PDFReportGenerator {
                 htmlContent = htmlContent.replace("{{" + segmentName + "}}", segment.getWebContent());
             }
 
-            // Render PDF to a temporary stream
+            logger.debug("Rendering PDF from HTML as size {} bytes", htmlContent.length());
+
+            // Check for external resources in HTML
+            if (htmlContent.contains("http://") || htmlContent.contains("https://")) {
+                logger.warn("HTML contains external URLs - this may cause timeouts in Lambda!");
+                logger.debug("HTML snippet: {}", htmlContent.substring(0, Math.min(500, htmlContent.length())));
+            }
+
             ByteArrayOutputStream tempOut = new ByteArrayOutputStream();
             PdfRendererBuilder builder = new PdfRendererBuilder();
+
+            // Disable font subset embedding to speed up processing
+            builder.useColorProfile(null);
+
             builder.withHtmlContent(htmlContent, null);
             builder.toStream(tempOut);
-            builder.run();
 
+            logger.info("About to call builder.run() - ensure Lambda has 512MB+ memory and 30s+ timeout");
+            long startTime = System.currentTimeMillis();
+
+            try {
+                builder.run();
+                logger.info("builder.run() completed in {} ms", System.currentTimeMillis() - startTime);
+            } catch (Exception e) {
+                logger.error("builder.run() FAILED after {} ms: {}", System.currentTimeMillis() - startTime, e.getMessage(), e);
+                throw new RuntimeException("PDF generation failed", e);
+            }
+
+            logger.info("PDF generated, size: {} bytes", tempOut.size());
             // Add watermark if needed
             if (report.getReportStatus() != null && !report.getReportStatus().equalsIgnoreCase("Complete")) {
+                logger.info("Adding watermark to PDF as report status is: {}", report.getReportStatus());
                 try (PDDocument document = PDDocument.load(new ByteArrayInputStream(tempOut.toByteArray()))) {
                     for (PDPage page : document.getPages()) {
                         PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true);
@@ -111,8 +147,10 @@ public class PDFReportGenerator {
             } else {
                 bos.write(tempOut.toByteArray());
             }
+            logger.info("PDF generation completed successfully");
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Error during PDF generation", ex);
+
         }
     }
 
