@@ -1,10 +1,6 @@
 package com.mhk.digidoc.pdf;
 
 
-import com.mhk.digidoc.entity.Patient;
-import com.mhk.digidoc.entity.PatientReport;
-import com.mhk.digidoc.entity.PatientReportSegment;
-import com.mhk.digidoc.util.DateUtils;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -30,59 +26,15 @@ public class PDFReportGenerator {
         System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
     }
 
-    public void loadHTML(ByteArrayOutputStream bos, Patient patient, PatientReport report, String htmlContent) {
-        logger.info("Starting PDF generation for patient ID: {}", patient != null ? patient.getPatientID() : "unknown");
+    public void loadHTML(ByteArrayOutputStream bos,  String htmlContent, boolean isInProgress) {
+
         try {
             if (htmlContent == null || htmlContent.trim().isEmpty()) {
                 throw new IllegalStateException("HTML content is empty. Check S3 object and path.");
             }
 
-            logger.debug("Replacing placeholders in HTML content");
-            // Replace placeholders
-            htmlContent = htmlContent.replace("{{patientname}}",
-                    (patient.getFirstName() != null ? patient.getFirstName() : "") + " " +
-                            (patient.getLastName() != null ? patient.getLastName() : ""));
-
-            htmlContent = htmlContent.replace("{{patientid}}",
-                    patient.getPatientID() != null ? patient.getPatientID() : "");
-
-            htmlContent = htmlContent.replace("{{dob}}",
-                    patient.getDateOfBirth() != null ? DateUtils.getFormatedDate(patient.getDateOfBirth()) : "");
-
-            htmlContent = htmlContent.replace("{{patientgender}}",
-                    patient.getGender() != null ? patient.getGender() : "");
-
-            htmlContent = htmlContent.replace("{{reportid}}",
-                    report.getReportID() != null ? report.getReportID() : "");
-
-            htmlContent = htmlContent.replace("{{address}}",
-                    patient.getAddress() != null ? patient.getAddress() : "");
-
-
-             htmlContent = htmlContent.replace("{{reportdate}}",
-                        report.getReportEndDate() != null ? DateUtils.getFormatedDate(report.getReportEndDate()) : "");
-
-            htmlContent = htmlContent.replace("{{patientage}}", DateUtils.getAge(patient.getDateOfBirth()));
-            htmlContent = htmlContent.replace("{{patientdob}}",
-                    patient.getDateOfBirth() != null ? patient.getDateOfBirth().toString() : "");
-            htmlContent = htmlContent.replace("{{phonenumber}}",
-                    patient.getContactNumber() != null ? patient.getContactNumber() : "");
-
-            List<PatientReportSegment> segmentList = report.getSegments();
-            for (PatientReportSegment segment : segmentList) {
-                String segmentName = segment.getTitle().trim().toLowerCase().replaceAll(" ", "").replaceAll("[&,/()]", "");
-                if(segment.getWebContent() == null || "null".equalsIgnoreCase(segment.getWebContent().trim()))
-                    segment.setWebContent("");
-                htmlContent = htmlContent.replace("{{" + segmentName + "}}", segment.getWebContent());
-            }
 
             logger.debug("Rendering PDF from HTML as size {} bytes", htmlContent.length());
-
-            // Check for external resources in HTML
-            if (htmlContent.contains("http://") || htmlContent.contains("https://")) {
-                logger.warn("HTML contains external URLs - this may cause timeouts in Lambda!");
-                logger.debug("HTML snippet: {}", htmlContent.substring(0, Math.min(500, htmlContent.length())));
-            }
 
             ByteArrayOutputStream tempOut = new ByteArrayOutputStream();
             PdfRendererBuilder builder = new PdfRendererBuilder();
@@ -106,8 +58,8 @@ public class PDFReportGenerator {
 
             logger.info("PDF generated, size: {} bytes", tempOut.size());
             // Add watermark if needed
-            if (report.getReportStatus() != null && !report.getReportStatus().equalsIgnoreCase("Complete")) {
-                logger.info("Adding watermark to PDF as report status is: {}", report.getReportStatus());
+            if (isInProgress) {
+                logger.info("Adding watermark to PDF as report status is: {}", isInProgress);
                 try (PDDocument document = PDDocument.load(new ByteArrayInputStream(tempOut.toByteArray()))) {
                     for (PDPage page : document.getPages()) {
                         PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true);

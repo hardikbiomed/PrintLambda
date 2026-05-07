@@ -17,11 +17,10 @@ public class PrintHandler implements RequestHandler<ReportWrapper, String> {
 
     @Override
     public String handleRequest(ReportWrapper wrapper, Context context) {
-        logger.info("Starting PDF generation for patient: {}", wrapper.getPatient() != null ? wrapper.getPatient().getPatientID() : "unknown");
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             PDFReportGenerator reportGenerator = new PDFReportGenerator();
-            reportGenerator.loadHTML(byteArrayOutputStream, wrapper.getPatient(), wrapper.getPatientReport(), wrapper.getReportContent());
+            reportGenerator.loadHTML(byteArrayOutputStream,  wrapper.getReportTemplate(),wrapper.isInProgress());
             byte[] pdfBytes = byteArrayOutputStream.toByteArray();
             String response = Base64.getEncoder().encodeToString(pdfBytes);
             logger.info("PDF generated successfully, size: {} bytes", pdfBytes.length);
